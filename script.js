@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function submitForm() {
     const formData = new FormData(form);
-    fetch("process.php", {
+    fetch("php/save.php", {
       method: "POST",
       body: formData,
     })
@@ -72,7 +72,11 @@ document.addEventListener("DOMContentLoaded", function () {
           form.style.display = "none";
           confirmationMessage.classList.remove("hidden");
         } else {
-          alert("There was an error submitting the form. Please try again.");
+          alert(
+            "Error: " +
+              (data.error ||
+                "There was an error submitting the form. Please try again.")
+          );
         }
       })
       .catch((error) => {
