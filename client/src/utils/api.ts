@@ -3,7 +3,7 @@ import axios from "axios"
 // Use environment variable if available, otherwise use environment-based URL
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  (process.env.NODE_ENV === "production" ? "https://taskmanager-backend-1u05.onrender.com" : "http://localhost:5000")
+  (process.env.NODE_ENV === "production" ? "https://taskmanager-mongodb-0g7g.onrender.com" : "http://localhost:5000")
 
 console.log("Using API URL:", API_URL)
 

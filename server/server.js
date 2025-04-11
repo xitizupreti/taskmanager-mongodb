@@ -6,48 +6,38 @@ const connectDB = require("./config/db");
 
 // Load environment variables
 dotenv.config();
-
-// Connect to database
-connectDB();
-
 const app = express();
-
-// Middleware
-app.use(
-  cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? ["https://xitiz-taskmanager.vercel.app"]
-        : "http://localhost:3000",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
 app.use(express.json());
 app.use(cookieParser());
 
+connectDB();
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://taskmanager-mongodb.vercel.app",
+];
+// Middleware
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg =
+          "The CORS policy for this site does not allow access from the specified Origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 // Routes
-app.use("/tasks", require("./routes/taskRoutes")); // Changed from /api/tasks to /tasks
-app.use("/", require("./routes/authRoutes")); // Add auth routes
-
-// Health check route
-app.get("/", (req, res) => {
-  res.json({ message: "Task Management API is running" });
-});
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    error: "Server Error",
-    message:
-      process.env.NODE_ENV === "development"
-        ? err.message
-        : "Something went wrong",
-  });
-});
-
+app.use("/tasks", require("./routes/taskRoutes"));
+app.use("/", require("./routes/authRoutes"));
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

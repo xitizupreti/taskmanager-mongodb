@@ -1,4 +1,3 @@
-// controllers/taskController.js
 const Task = require("../models/Task");
 
 // @desc    Create a new task
@@ -24,6 +23,7 @@ exports.createTask = async (req, res) => {
     });
   }
 };
+
 // @desc    Get all tasks with pagination, sorting, and filtering
 // @route   GET /api/tasks
 // @access  Private
@@ -76,8 +76,16 @@ exports.getTasks = async (req, res) => {
     // Get total count for pagination info
     const total = await Task.countDocuments(filter);
 
-    // Return tasks in the format expected by the frontend
-    res.status(200).json(tasks);
+    // Return tasks with pagination info
+    res.status(200).json({
+      tasks,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
     res.status(400).json({
       success: false,
@@ -86,9 +94,9 @@ exports.getTasks = async (req, res) => {
   }
 };
 
-// Other controller methods remain the same but add user check
-// For example:
-
+// @desc    Get a single task
+// @route   GET /api/tasks/:id
+// @access  Private
 exports.getTask = async (req, res) => {
   try {
     const task = await Task.findOne({
@@ -112,6 +120,9 @@ exports.getTask = async (req, res) => {
   }
 };
 
+// @desc    Update a task
+// @route   PUT /api/tasks/:id
+// @access  Private
 exports.updateTask = async (req, res) => {
   try {
     const task = await Task.findOneAndUpdate(
@@ -136,6 +147,9 @@ exports.updateTask = async (req, res) => {
   }
 };
 
+// @desc    Delete a task
+// @route   DELETE /api/tasks/:id
+// @access  Private
 exports.deleteTask = async (req, res) => {
   try {
     const task = await Task.findOneAndDelete({
@@ -159,6 +173,9 @@ exports.deleteTask = async (req, res) => {
   }
 };
 
+// @desc    Update task status
+// @route   PATCH /api/tasks/:id/status
+// @access  Private
 exports.updateTaskStatus = async (req, res) => {
   try {
     const task = await Task.findOneAndUpdate(

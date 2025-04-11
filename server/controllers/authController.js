@@ -1,4 +1,3 @@
-// controllers/authController.js
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
@@ -82,6 +81,8 @@ exports.logout = (req, res) => {
     })
     .json({ msg: "Logged out" });
 };
+
+// Check if user is authenticated
 exports.checkAuth = async (req, res) => {
   try {
     // If the middleware allowed the request to reach here, the user is authenticated
